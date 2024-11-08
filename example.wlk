@@ -78,18 +78,18 @@ class Ejercito {
   }
 
   method dividirEnDos() {
-    miembros.sortedBy({uno, otro => uno.potencialOfensivo() > otro.potencialOfensivo()}).take(10)   // agarro los primeros 10 miembros con mayor potencial ofensivo
-  }
+    miembros.sortBy({uno, otro => uno.potencialOfensivo() > otro.potencialOfensivo()}).take(10)   // 1ero) ordeno la lista segun laos potencias ofensivos 
+  }                                                                                               // 2dos) agarro los primeros 10 miembros con mayor potencial ofensivo
 
 }
 
 
 class Zona {
-  var habitantes = []
+  var habitantes // va a ser un ejercito directamente!! (porque esto permite que peleen entre otros) (de la Clase Ejercito)
 
-  method potencialDefensivo() = habitantes.sum({habitante => habitante.potencialOfensivo()})  
+  method potencialDefensivo() = habitantes.potencialOfensivo()  // le mande el mensaje al ejercito
 
-  method esOcupadaPor(ejercito) { habitantes = ejercito.miembros() }  // ser ocupado --> significa que el ejercito pise los habitantes de la zona 
+  method esOcupadaPor(ejercito) { habitantes = ejercito}  // ser ocupado --> significa que el ejercito pise los habitantes de la zona 
  
 
 }
@@ -99,9 +99,13 @@ class Aldea inherits Zona {
 
   override method esOcupadaPor(ejercito) { 
     if(ejercito.miembros().size() > maxDeHabitantes) {
-      ejercito.dividirEnDos()
+      const nuevosHabitantes = ejercito.dividirEnDos()    // los nuevos habitantes son los 10 miembros del ejercito con mayor poderOfensivo
+      
+      super(new Ejercito (miembros = nuevosHabitantes))   // la zona va a estar ocupada por un nuevo ejercito con estos nuevosHabitantes
+
+      ejercito.miembros().removeAll(nuevosHabitantes)     // saco los 10 seleccionados de los miembros del ejercito que hizo la ocupacion en la zona
     
-    }else super(ejercito)
+    }else {super(ejercito)}
   }
 
 }
